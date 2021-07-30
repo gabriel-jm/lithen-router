@@ -1,15 +1,30 @@
 {
   "name": "lithen-router",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "description": "A routing implementation for use with Web Components",
+  "author": "Gabriel José",
+  "homepage": "https://github.com/Gabriel-JM/lithen-router#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Gabriel-JM/lithen-router.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Gabriel-JM/lithen-router/issues"
+  },
+  "main": "./build/src/index.js",
+  "types": "./build/src/index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
   "devDependencies": {
     "typescript": "^4.3.5"
-  }
+  },
+  "keywords": [
+    "lithen",
+    "webcomponents",
+    "web-components",
+    "client-side",
+    "routing"
+  ],
+  "license": "ISC"
 }
