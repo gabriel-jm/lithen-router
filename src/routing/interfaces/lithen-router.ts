@@ -6,7 +6,6 @@ export interface LithenRouter {
    * @param value A dictionary to define which element has to be
    * rendered by path.
    * 
-   * @remarks
    * The notFound must be passed as a fallback.
    * 
    * @example
@@ -37,7 +36,6 @@ export interface LithenRouter {
    * Used to define a callback event when the router
    * change the app's path.
    * 
-   * @remarks
    * It register the same callback function to the
    * `window.onpopstate` event.
    * 
@@ -49,7 +47,6 @@ export interface LithenRouter {
    * This method verifies in the defined routes if
    * someone matches the current window path.
    * 
-   * @remarks
    * If no path matches it fallback to the `notFound`
    * element defined in routes.
    * 
