@@ -1,3 +1,3 @@
-export type ElementFactory = () => HTMLElement
+export type ElementFactory = () => Element | DocumentFragment
 
-export type RouteDefiner = string | ElementFactory | HTMLElement
+export type RouteDefiner = string | ElementFactory | Element | DocumentFragment
