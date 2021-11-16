@@ -9,3 +9,4 @@ to you the current element from the defined elements and based on the current pa
 
 ## The Router methods
 - [defineRoutes](./docs/define-routes.md)
+- [onNavigate](./docs/on-navigate.md)
