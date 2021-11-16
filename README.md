@@ -1,3 +1,11 @@
 # Lithen Router
 
-A routing implementation for use with Web Components, its part of Lithen.
+A router class for use with Web Components, its part of Lithen.
+
+## Usage
+
+You basicly have to define some routes and which element you want to use. The LithenRouter will return
+to you the current element from the defined elements and based on the current path name.
+
+## The Router methods
+- [defineRoutes](./docs/define-routes.md)

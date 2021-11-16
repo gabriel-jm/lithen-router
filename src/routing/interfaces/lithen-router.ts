@@ -34,7 +34,7 @@ export interface LithenRouter {
 
   /**
    * Used to define a callback event when the router
-   * change the app's path.
+   * detects a change in the app's path.
    * 
    * It register the same callback function to the
    * `window.onpopstate` event.
