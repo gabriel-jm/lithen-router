@@ -9,5 +9,10 @@ to you the current element from the defined elements based on the current path n
 
 ## The Router methods
 - [defineRoutes](./docs/define-routes.md)
+- [matchRoute](./docs/match-route.md)
 - [onNavigate](./docs/on-navigate.md)
 - [goTo](./docs/go-to.md)
+
+## Libs that are part of Lithen
+- [lithen-super-element](https://www.npmjs.com/package/lithen-super-element)
+- [lithen-tag-functions](https://www.npmjs.com/package/lithen-tag-functions)

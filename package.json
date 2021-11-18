@@ -26,5 +26,5 @@
     "client-side",
     "routing"
   ],
-  "license": "ISC"
+  "license": "MIT"
 }

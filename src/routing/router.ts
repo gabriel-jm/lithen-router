@@ -40,7 +40,9 @@ class Router implements LithenRouter {
   }
 
   matchRoute() {
-    if(!routes) return
+    if(!routes) {
+      throw new NoPathMatchError()
+    }
 
     const { pathname } = location
 
