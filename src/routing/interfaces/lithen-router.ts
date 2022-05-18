@@ -1,4 +1,3 @@
-import { RouteDefiner } from './route-definer'
 import { RoutesRecord } from './routes-record'
 
 export interface LithenRouter {
@@ -17,7 +16,7 @@ export interface LithenRouter {
    * }
    * ```
    */
-  defineRoutes(value: RoutesRecord): void
+  defineRoutes<T = any>(value: RoutesRecord<T>): void
 
   /**
    * Method used to change the current location of
@@ -45,7 +44,8 @@ export interface LithenRouter {
 
   /**
    * This method verifies in the defined routes if
-   * someone matches the current window path.
+   * someone matches the current window path and return
+   * the value assigned to the path in defined routes.
    * 
    * If no path matches it fallback to the `notFound`
    * element defined in routes.
@@ -54,5 +54,5 @@ export interface LithenRouter {
    * Thrown when it has neither a path matching nor a
    * notFound.
    */
-  matchRoute(): RouteDefiner | undefined
+  matchRoute<T = any>(): T
 }

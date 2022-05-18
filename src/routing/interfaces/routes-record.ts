@@ -1,5 +1,3 @@
-import { RouteDefiner } from './route-definer'
-
-export interface RoutesRecord extends Record<string, RouteDefiner> {
-  notFound: RouteDefiner
+export interface RoutesRecord<T = any> extends Record<string, T> {
+  notFound: T
 }

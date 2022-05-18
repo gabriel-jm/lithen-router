@@ -1,6 +1,6 @@
 ## Lithen Router - matchRoute method
 
-The `matchRoute` is a method used to get the correct element based on the current path. It 
+The `matchRoute` is a generic method used to get the correct value based on the current path. It 
 follows this order:
 - it will verify if has some routes defined.
   - if not will throw an `NoPathMatchError`.
