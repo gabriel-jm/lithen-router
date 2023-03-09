@@ -2,21 +2,23 @@ import { RoutesRecord } from './routes-record'
 
 export interface LithenRouter {
   /**
-   * @param value A dictionary to define which element has to be
-   * rendered by path.
+   * Method used to define which value must return on match the
+   * defined route.
    * 
    * The notFound must be passed as a fallback.
    * 
+   * @param value - the record defining the routes.
+   * 
    * @example
    * ```ts
-   * routes: {
+   * router.defineRoutes({
    *   '/': 'app-home',
    *   '/about': 'app-about',
    *   notFound: 'not-found'
-   * }
+   * })
    * ```
    */
-  defineRoutes<T = any>(value: RoutesRecord<T>): void
+  defineRoutes<T = any>(value: RoutesRecord<T>): this
 
   /**
    * Method used to change the current location of
@@ -29,18 +31,21 @@ export interface LithenRouter {
    * Thrown when the route path didn't start with `/`
    * and has some invalid characters.
    */
-  goTo(path: string): void
+  navigate(path: string): void
 
   /**
    * Used to define a callback event when the router
-   * detects a change in the app's path.
+   * detects a change in the browser's path.
+   * 
+   * This method is only useful if you are using the
+   * `navigate` method to deal with navigation.
    * 
    * It register the same callback function to the
    * `window.onpopstate` event.
    * 
    * @param callback Event listener function.
    */
-  onNavigate(callback: () => void): void
+  onNavigate(callback: () => void): this
 
   /**
    * This method verifies in the defined routes if

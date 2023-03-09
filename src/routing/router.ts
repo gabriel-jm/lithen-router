@@ -1,23 +1,28 @@
 import { changeHistory } from './change-history'
 import { InvalidPathFormatError } from '../errors/invalid-path-format-error'
 import { NoPathMatchError } from '../errors/no-path-math-error'
-import { LithenRouter, RouterEvents, RoutesRecord } from './interfaces/index'
+import { LithenRouter, RoutesRecord } from './interfaces/index'
 
 let routes: RoutesRecord = {
   notFound: ''
 }
 
+export interface RouterEvents {
+  navigate: Set<(routeData: unknown) => void>
+}
+
 const events: RouterEvents = {
-  navigate: []
+  navigate: new Set()
 }
 
 class Router implements LithenRouter {
   defineRoutes(value: RoutesRecord) {
     routes = value
+    return this
   }
 
-  goTo(path: string) {
-    const match = path.match(/^\/[a-zA-Z0-9\-\/]*/)
+  navigate(path: string) {
+    const match = path.match(/^\/[a-zA-Z0-9\-:\/]*/)
 
     if(!match) {
       throw new InvalidPathFormatError(path)
@@ -31,12 +36,24 @@ class Router implements LithenRouter {
 
     changeHistory(path)
 
-    events.navigate.forEach(callback => callback())
+    const routeMatchData = this.matchRoute()
+
+    for (const listener of events.navigate) {
+      listener(routeMatchData)
+    }
+
+    return this
   }
 
   onNavigate(callback: () => void) {
-    events.navigate.push(callback)
-    window.addEventListener('popstate', callback)
+    events.navigate.add(callback)
+    window.addEventListener('popstate', () => {
+      const routeMatchData = this.matchRoute()
+
+      callback(routeMatchData)
+    })
+
+    return this
   }
 
   matchRoute() {
