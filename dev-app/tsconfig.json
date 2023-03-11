@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "outDir": "./dist",
+    "paths": {
+      "lithen-router": ["./build/index.d.ts"],
+      "/dist*": ["./src*"]
+    }
+  },
+  "include": ["src"]
+}

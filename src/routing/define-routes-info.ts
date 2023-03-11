@@ -7,7 +7,9 @@ export interface RouteInfo {
 }
 
 export function defineRoutesInfo(rawRoutes: Record<string, unknown>) {
-  return Object.entries(rawRoutes).map(([rawRoute, value]) => {
+  const { notFound, ...routes } = rawRoutes;
+
+  return Object.entries(routes).map(([rawRoute, value]) => {
     if (!rawRoute.startsWith('/')) {
       throw new InvalidPathFormatError(
         rawRoute,

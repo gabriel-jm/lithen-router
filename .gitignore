@@ -1,3 +1,7 @@
 /node_modules
 /build
 /.vscode
+
+# Dev App
+/dev-app/dist
+/dev-app/build
