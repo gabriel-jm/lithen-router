@@ -43,7 +43,20 @@ export function findRouteMatch(requestedPath: string, routesInfo: RouteInfo[]) {
 
 function getCorrectPathMatch(requestedPath: string, matchedRoutes: RouteMatch[]) {
   for (const routeMatch of matchedRoutes) {
-    if (routeMatch.path === requestedPath) {
+    const routePieces = routeMatch.path.split('/').filter(Boolean)
+    const allRoutePiecesMatched = requestedPath.split('/')
+      .filter(Boolean)
+      .every((piece, index) => {
+        const routePiece = routePieces[index]
+
+        if (routePiece.startsWith(':')) {
+          return true
+        }
+
+        return routePiece === piece
+      })
+
+    if (allRoutePiecesMatched) {
       return routeMatch
     }
   }

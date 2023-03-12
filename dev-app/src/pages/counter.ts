@@ -2,7 +2,11 @@ import { html } from '../html.js'
 import { router } from '../router.js'
 
 export function counter() {
-  const initalValue = Number(router.searchParams.get('initialCount') ?? 0)
+  const initalValue = Number(
+    router.searchParams.get('initialCount')
+    ?? router.params.initialCount
+    ?? 0
+  )
   const count = {
     value: initalValue,
     increment() {
@@ -20,6 +24,15 @@ export function counter() {
       </button>
     </div>
 
-    <a href="/counter?initialCount=10">Start count with 10</a>
+    <div>
+      <a href="/counter?initialCount=10">
+        Start count with 10 in query
+      </a>
+    </div>
+    <div>
+      <a href="/10">
+        Start count with 10 in params
+      </a>
+    </div>
   `
 }
