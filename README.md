@@ -1,6 +1,9 @@
 # Lithen Router
 
-A router class for use with Web Components, its part of Lithen.
+A router class for generic usage, its part of Lithen.
+
+## Getting started
+You can see the [Getting started](./docs/getting-started.md) page, teaching how to setup a [Vanilla project](./docs/getting-started.md#vanilla-project) or a [project with Vite](./docs/getting-started.md#project-with-vite).
 
 ## Usage
 
