@@ -38,8 +38,8 @@ The `Lithen Router` is a simple library that can be used with simple steps.
 - In the `main.js`. For more details about each method and classes, search for it in the docs.
   ```js
   import { LithenRouter } from 'https://esm.sh/lithen-router'
-  import { home } from './home'
-  import { notFound } from './not-found'
+  import { home } from './home.js'
+  import { notFound } from './not-found.js'
 
   const router = new LithenRouter({
     '/': home,
@@ -73,8 +73,8 @@ The `Lithen Router` is a simple library that can be used with simple steps.
 
   ```js
   import { LithenRouter } from 'lithen-router'
-  import { home } from './home'
-  import { notFound } from './not-found'
+  import { home } from './home.js'
+  import { notFound } from './not-found.js'
 
   const router = new LithenRouter({
     '/': home,
@@ -96,3 +96,46 @@ The `Lithen Router` is a simple library that can be used with simple steps.
 - And you're good to go!!!
 
 > Warn that this vanilla project setup only works with Javascript.
+
+---
+
+## Project with Vite
+
+- Create a folder for the project.
+- Init a Vanilla Vite project.
+  ```sh
+  npm init vite .
+  ```
+  - Select `Vanilla` framework.
+  - Select Javascript or Typescript, we'll use Typescript in this tutorial.
+
+- Install the `lithen-router` package.
+  ```sh
+  npm i lithen-router
+  ```
+
+- Except for the `vite-env.d.ts`, delete all other files inside `src` folder.
+- Create a new `main.ts` file.
+  ```ts
+  import { LithenRouter } from 'lithen-router'
+  import { home } from './home'
+  import { notFound } from './not-found'
+
+  const router = new LithenRouter({
+    '/': home,
+    notFound
+  })
+
+  window.onload = () => {
+    const match = router.matchRoute()
+
+    document.body.replaceChildren(match.value())
+  }
+  ```
+
+- Run the dev script.
+  ```sh
+  npm run dev
+  ```
+
+- And you're good to go!!!
