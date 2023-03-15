@@ -21,3 +21,11 @@ const router = new LithenRouter({
   notFound
 })
 ```
+
+The returned value is an instance of `LithenRouter` and that is the value that must be used in the
+application when needed.
+
+## LithenRouter methods
+- [matchRoute](./docs/match-route.md)
+- [navigate](./docs/go-to.md)
+- [onNavigate](./docs/on-navigate.md)

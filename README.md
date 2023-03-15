@@ -8,11 +8,10 @@ You can see the [Getting started](./docs/getting-started.md) page, teaching how 
 ## LithenRouter Constructor
 - [constructor](./docs/constructor.md)
 
-## The Router methods
-- [defineRoutes](./docs/define-routes.md)
+## LithenRouter methods
 - [matchRoute](./docs/match-route.md)
+- [navigate](./docs/navigate.md)
 - [onNavigate](./docs/on-navigate.md)
-- [goTo](./docs/go-to.md)
 
 ## Libs that are part of Lithen
 - [lithen-super-element](https://www.npmjs.com/package/lithen-super-element)

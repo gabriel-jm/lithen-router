@@ -23,10 +23,10 @@ export interface RouteData<T = unknown> {
   searchParams: URLSearchParams
 
   /**
-   * An object containing the a key and value pair
+   * A Map containing the a key and value pair
    * for the path params.
    */
-  params?: Record<string, string>
+  params?: Map<string, string>
   
   /**
    * The value defined to be returned on the

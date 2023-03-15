@@ -39,7 +39,7 @@ export type OnNavigateListener<T> = (data: RouteData<T>) => void | Promise<void>
 export class LithenRouter<T> {
   #routesInfo: RouteInfo[]
   #searchParams?: URLSearchParams
-  #params?: Record<string, string>
+  #params?: Map<string, string>
   #listeners = new Set<OnNavigateListener<T>>()
 
   constructor(value: RoutesRecord<T>) {

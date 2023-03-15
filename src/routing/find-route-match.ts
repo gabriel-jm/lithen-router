@@ -1,7 +1,7 @@
 import { RouteInfo } from './define-routes-info.js'
 
 interface RouteMatch extends RouteInfo {
-  params: Record<string, string>
+  params: Map<string, string>
 }
 
 export function findRouteMatch(requestedPath: string, routesInfo: RouteInfo[]) {
@@ -14,7 +14,9 @@ export function findRouteMatch(requestedPath: string, routesInfo: RouteInfo[]) {
 
     if (!match) return acc
 
-    const params: Record<string, string> = match.groups ?? {}
+    const params: Map<string, string> = new Map(
+      Object.entries(match.groups ?? {})
+    )
 
     const pathHasMatched = (
       match[0] === requestedPath
