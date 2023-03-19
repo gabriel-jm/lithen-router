@@ -1,4 +1,5 @@
 import { HTMLString } from './html.js'
+import { signalSymbol } from './signal.js'
 
 type ResolverValue = {
   currentHTML: string
@@ -14,7 +15,8 @@ export function resolveTemplateData(value: ResolverValue) {
   const resolvedString = pipe(value,
     resolveHTMLString,
     resolveEventListener,
-    resolveRef
+    resolveRef,
+    resolveSignal
   )
 
   return {
@@ -62,7 +64,7 @@ function resolveHTMLString(value: ResolverValue) {
 function resolveRef(value: ResolverValue) {
   const { currentHTML, hash, index, data, resources } = value
 
-  if (typeof data === 'object' && 'el' in data) {
+  if (typeof data === 'object' && 'el' in data!) {
     const match = currentHTML.match(/.*\sref=$/)
 
     if (!match) return
@@ -70,5 +72,42 @@ function resolveRef(value: ResolverValue) {
     const refId = `"${hash}-${index}"`
     resources.set(`ref=${refId}`, data)
     return refId
+  }
+}
+
+function resolveSignal(value: ResolverValue) {
+  const { currentHTML, hash, index, resources, data } = value
+
+  console.log(typeof data !== 'object'
+  || Reflect.get(data!, '_symbol') !== signalSymbol, data)
+
+  if (
+    typeof data !== 'object'
+    || Reflect.get(data!, '_symbol') !== signalSymbol
+  ) return
+
+  const isInsideTag = checkIsInsideTag(currentHTML)
+
+  console.log({ isInsideTag })
+
+  if (!isInsideTag) return
+
+  const signalId = `sig="${hash}-${index}"`
+  resources.set(signalId, data)
+
+  console.log(`set resource`, signalId, data)
+
+  return `<template ${signalId}></template>`
+}
+
+function checkIsInsideTag(html: string) {
+  for (let i=html.length-1; i>0; i-=1) {
+    const letter = html.at(i)
+
+    if (letter === undefined) return false
+
+    if (letter === '>') return true
+
+    if (letter === '<') return false
   }
 }

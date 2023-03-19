@@ -1,12 +1,14 @@
 import { Ref } from './ref.js'
-import { resolveTemplateData } from './resolve-value.js'
+import { resolveTemplateData } from './resolve-template-data.js'
+import { Signal } from './signal.js'
 
 export class HTMLString extends String {
   resources = new Map()
 
   constructor(data: string, resources?: Map<string, unknown>) {
     super(data)
-    this.resources = resources
+
+    if (resources) this.resources = resources
   }
 }
 
@@ -60,6 +62,10 @@ function applyResources(docFrag: DocumentFragment, resources: Map<string, unknow
     if (key.startsWith('ref=')) {
       applyRef(docFrag, key, value as Ref)
     }
+
+    if (key.startsWith('sig=')) {
+      applySignal(docFrag, key, value as Signal<unknown>)
+    }
   }
 
   resources.clear()
@@ -88,4 +94,27 @@ function applyRef(
 
   ref.el = element
   element.removeAttribute('ref')
+}
+
+function applySignal(
+  docFrag: DocumentFragment,
+  key: string,
+  signal: Signal<unknown>
+) {
+  const placeholder = docFrag.querySelector(`template[${key}]`)
+
+  if (!placeholder) return
+
+  const textNode = new Text(String(signal.get()))
+
+  function updateNode(currentValue: unknown) {
+    if (!textNode.isConnected) {
+      signal.remove(updateNode)
+    }
+
+    textNode.data = String(currentValue)
+  }
+
+  signal.onChange(updateNode)
+  placeholder.replaceWith(textNode)
 }

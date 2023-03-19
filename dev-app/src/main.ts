@@ -6,7 +6,7 @@ function init() {
   const { layout, render: pageRender } = match.value
   const html = layout ? layout(pageRender()) : pageRender()
 
-  render(html, document.querySelector('#app'))
+  render(html, document.querySelector('#app')!)
 }
 
 router.onNavigate(init)

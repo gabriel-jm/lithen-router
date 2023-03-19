@@ -1,30 +1,24 @@
 import { html } from '../html/html.js'
 import { ref } from '../html/ref.js'
+import { signal } from '../html/signal.js'
 import { router } from '../router.js'
 
 export function counter() {
   const pRef = ref<HTMLParagraphElement>()
-  const initalValue = Number(
-    router.searchParams.get('initialCount')
-    ?? router.params.get('initialCount')
+  const initalValue: number = Number(
+    router.searchParams?.get('initialCount')
+    ?? router.params?.get('initialCount')
     ?? 0
   )
-  const count = {
-    value: initalValue,
-    increment() {
-      count.value++
-
-      if (pRef.el) {
-        pRef.el.textContent = 'Current Count: ' + count.value
-      }
-    }
-  }
+  const count = signal(initalValue)
 
   return html`
     <h1>Counter Page</h1>
     <div>
-      <p ref=${pRef}>Current Count: ${initalValue}</p>
-      <button on-click=${() => count.increment()}>
+      <p ref=${pRef}>
+        Current Count: ${count}
+      </p>
+      <button on-click=${() => count.set(value => value + 1)}>
         increment
       </button>
     </div>
