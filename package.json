@@ -17,7 +17,7 @@
   "scripts": {
     "build": "rm -rf ./build && tsc",
     "dev:build": "./build-dev-app.sh",
-    "dev": "vite -c vite.config.ts ./dev-app",
+    "dev": "npm run dev:build && vite -c vite.config.ts ./dev-app",
     "prepublishOnly": "rm -rf build && npm run build",
     "check": "ncu"
   },

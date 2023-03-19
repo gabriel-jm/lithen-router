@@ -6,7 +6,7 @@ export function counter() {
   const pRef = ref<HTMLParagraphElement>()
   const initalValue = Number(
     router.searchParams.get('initialCount')
-    ?? router.params.initialCount
+    ?? router.params.get('initialCount')
     ?? 0
   )
   const count = {
@@ -33,11 +33,10 @@ export function counter() {
       href: '/counter?initialCount=10',
       text: 'Start count with 10 in query'
     })}
-    <div>
-      <a href="/counter/10">
-        Start count with 10 in params
-      </a>
-    </div>
+    ${counterInitLink({
+      href: '/counter/10',
+      text: 'Start count with 10 in params'
+    })}
   `
 }
 

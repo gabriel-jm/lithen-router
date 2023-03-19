@@ -5,4 +5,4 @@ npm run build
 rm -rf ./dev-app/build && cp -r ./build ./dev-app/build
 
 # Build dev app in watch mode
-tsc -p ./dev-app/tsconfig.json --watch --outDir ./dev-app/build
+tsc -p ./dev-app/tsconfig.json --outDir ./dev-app/build
