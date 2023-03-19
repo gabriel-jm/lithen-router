@@ -1,3 +1,4 @@
+import { Ref } from './ref.js'
 import { resolveTemplateData } from './resolve-value.js'
 
 export class HTMLString extends String {
@@ -44,22 +45,47 @@ export function render(htmlText: HTMLString, target: Element) {
   const documentFragment = template.content
 
   if (htmlText.resources.size) {
-    applyEvents(documentFragment, htmlText.resources)
+    applyResources(documentFragment, htmlText.resources)
   }
 
   target.replaceChildren(documentFragment)
 }
 
-function applyEvents(docFrag: DocumentFragment, resources: Map<string, Function>) {
-  for (const [key, listener] of resources) {
-    const element = docFrag.querySelector(`[${key}]`)
+function applyResources(docFrag: DocumentFragment, resources: Map<string, unknown>) {
+  for (const [key, value] of resources) {
+    if (key.startsWith('on-')) {
+      applyEvents(docFrag, key, value as EventListener)
+    }
 
-    if (!element) continue
-
-    const [rawEventName] = key.split('=')
-    const eventName = rawEventName.substring('on-'.length)
-
-    element.addEventListener(eventName, listener as EventListener)
-    element.removeAttribute(rawEventName)
+    if (key.startsWith('ref=')) {
+      applyRef(docFrag, key, value as Ref)
+    }
   }
+
+  resources.clear()
+}
+
+function applyEvents(docFrag: DocumentFragment, key: string, listener: EventListener) {
+  const element = docFrag.querySelector(`[${key}]`)
+
+  if (!element) return
+
+  const [rawEventName] = key.split('=')
+  const eventName = rawEventName.substring('on-'.length)
+
+  element.addEventListener(eventName, listener as EventListener)
+  element.removeAttribute(rawEventName)
+}
+
+function applyRef(
+  docFrag: DocumentFragment,
+  key: string,
+  ref: Ref
+) {
+  const element = docFrag.querySelector(`[${key}]`)
+
+  if (!element) return
+
+  ref.el = element
+  element.removeAttribute('ref')
 }
