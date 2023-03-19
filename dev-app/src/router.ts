@@ -1,5 +1,5 @@
 import { LithenRouter } from 'lithen-router'
-import { HTMLString } from './html.js'
+import { HTMLString } from './html/html.js'
 import { wrapNavLayout } from './layouts/nav-layout.js'
 import { about } from './pages/about.js'
 import { counter } from './pages/counter.js'
@@ -15,7 +15,7 @@ const router = new LithenRouter<RouterData>({
   '/': wrapNavLayout(home),
   '/about': wrapNavLayout(about),
   '/counter': wrapNavLayout(counter),
-  '/:initialCount': wrapNavLayout(counter),
+  '/counter/:initialCount': wrapNavLayout(counter),
   notFound: { render: notFound }
 })
 

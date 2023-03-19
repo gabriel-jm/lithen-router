@@ -1,4 +1,4 @@
-import { html } from '../html.js'
+import { html } from '../html/html.js'
 import { router } from '../router.js'
 
 export function counter() {
@@ -30,7 +30,7 @@ export function counter() {
       </a>
     </div>
     <div>
-      <a href="/10">
+      <a href="/counter/10">
         Start count with 10 in params
       </a>
     </div>

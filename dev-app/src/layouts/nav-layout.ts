@@ -1,4 +1,4 @@
-import { html, HTMLString } from '../html.js'
+import { html, HTMLString } from '../html/html.js'
 import { router } from '../router.js'
 
 export function navLayout(children: HTMLString) {

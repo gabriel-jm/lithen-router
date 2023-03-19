@@ -1,8 +1,11 @@
+import { resolveTemplateData } from './resolve-value.js'
+
 export class HTMLString extends String {
   resources = new Map()
 
-  constructor(data: string) {
+  constructor(data: string, resources?: Map<string, unknown>) {
     super(data)
+    this.resources = resources
   }
 }
 
@@ -15,25 +18,17 @@ export function html(text: TemplateStringsArray, ...values: unknown[]) {
     const currentHTML = acc + str
     let strValue = String(value ?? '')
 
-    if (typeof value === 'function') {
-      const eventMatch = currentHTML.match(/.*\son-([\w\-]+)=$/)
+    const resolvedValue = resolveTemplateData({
+      currentHTML,
+      resources,
+      hash,
+      index,
+      data: value
+    })
 
-      if (eventMatch) {
-        const eventName = eventMatch[1]
-        const eventId = `"${hash}-${index}"`
-        resources.set(`on-${eventName}=${eventId}`, value)
-        strValue = eventId
-      }
-    }
+    resources = resolvedValue.resources
 
-    if (value instanceof HTMLString) {
-      resources = new Map([
-        ...resources,
-        ...value.resources
-      ])
-    }
-
-    return currentHTML + strValue
+    return currentHTML + (resolvedValue.resolvedString ?? strValue)
   }, '')
 
   const htmlString = new HTMLString(htmlText)

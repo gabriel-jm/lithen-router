@@ -1,5 +1,5 @@
 import { router } from './router.js'
-import { render } from '/dist/html.js'
+import { render } from './html/html.js'
 
 function init() {
   const match = router.matchRoute()
