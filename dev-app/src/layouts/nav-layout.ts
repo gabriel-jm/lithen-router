@@ -28,6 +28,9 @@ export function navLayout(children: HTMLString) {
             <a href="/counter">Counter</a>
           </li>
           <li>
+            <a href="/to-do">To Do List</a>
+          </li>
+          <li>
             <a href="/not">Not found</a>
           </li>
         </ul>
