@@ -37,7 +37,7 @@ function pipe(value: ResolverValue, ...resolvers: Resolver<any>[]) {
 function resolveObjectValues(value: ResolverValue) {
   if (typeof value.data !== 'object') return
 
-  return pipe(value, resolveRef, resolveSignal)
+  return pipe(value, resolveArray, resolveRef, resolveSignal)
 }
 
 function resolveEventListener(value: ResolverValue) {
@@ -64,6 +64,25 @@ function resolveHTMLString(value: ResolverValue) {
 
     return value.data.toString()
   }
+}
+
+function resolveArray(value: ResolverValue) {
+  if (!Array.isArray(value.data)) return
+  
+  const { data: dataList } = value
+
+  return dataList.reduce((acc, data) => {
+    if (data instanceof HTMLString) {
+      value.resources = new Map([
+        ...value.resources,
+        ...data.resources
+      ])
+
+      return acc + data.toString()
+    }
+
+    return acc + String(data)
+  }, '')
 }
 
 function resolveRef(value: ResolverValue<object>) {

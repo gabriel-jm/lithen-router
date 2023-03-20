@@ -23,14 +23,16 @@ export function counter() {
       </button>
     </div>
 
-    ${counterInitLink({
-      href: '/counter?initialCount=10',
-      text: 'Start count with 10 in query'
-    })}
-    ${counterInitLink({
-      href: '/counter/10',
-      text: 'Start count with 10 in params'
-    })}
+    ${[  
+      counterInitLink({
+        href: '/counter?initialCount=10',
+        text: 'Start count with 10 in query'
+      }),
+      counterInitLink({
+        href: '/counter/10',
+        text: 'Start count with 10 in params'
+      })
+    ]}
   `
 }
 
