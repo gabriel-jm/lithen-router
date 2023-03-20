@@ -18,7 +18,7 @@ export function html(text: TemplateStringsArray, ...values: unknown[]) {
 
   const htmlText = text.reduce((acc, str, index) => {
     const value = values[index]
-    const currentHTML = acc + str
+    const currentHTML: string = acc + str
     let strValue = String(value ?? '')
 
     const resolvedValue = resolveTemplateData({
@@ -63,8 +63,12 @@ function applyResources(docFrag: DocumentFragment, resources: Map<string, unknow
       applyRef(docFrag, key, value as Ref)
     }
 
-    if (key.startsWith('sig=')) {
-      applySignal(docFrag, key, value as Signal<unknown>)
+    if (key.startsWith('text-sig=')) {
+      applyTextSignal(docFrag, key, value as Signal<unknown>)
+    }
+
+    if (key.startsWith('sig-attr-')) {
+      applyAttributeSignal(docFrag, key, value as Signal<unknown>)
     }
   }
 
@@ -96,7 +100,7 @@ function applyRef(
   element.removeAttribute('ref')
 }
 
-function applySignal(
+function applyTextSignal(
   docFrag: DocumentFragment,
   key: string,
   signal: Signal<unknown>
@@ -109,7 +113,7 @@ function applySignal(
 
   function updateNode(currentValue: unknown) {
     if (!textNode.isConnected) {
-      signal.remove(updateNode)
+      return signal.remove(updateNode)
     }
 
     textNode.data = String(currentValue)
@@ -117,4 +121,38 @@ function applySignal(
 
   signal.onChange(updateNode)
   placeholder.replaceWith(textNode)
+}
+
+function applyAttributeSignal(
+  docFrag: DocumentFragment,
+  key: string,
+  signal: Signal<unknown>
+) {
+  const query = key.substring('sig-attr-'.length)
+  const element = docFrag.querySelector(`[${query}]`)
+
+  if (!element) return
+
+  const [attributeName] = query.split('=')
+
+  function updateElementAttribute(value: unknown) {
+    if (typeof value === 'boolean') {
+      return value
+        ? element?.setAttribute(attributeName, '')
+        : element?.removeAttribute(attributeName)
+    }
+
+    element?.setAttribute(attributeName, String(value))
+  }
+
+  function updateAttribute(value: unknown) {
+    if (!element?.isConnected) {
+      return signal.remove(updateAttribute)
+    }
+
+    return updateElementAttribute(value)
+  }
+
+  signal.onChange(updateAttribute)
+  updateElementAttribute(signal.get())
 }

@@ -1,22 +1,21 @@
 import { HTMLString } from './html.js'
-import { signalSymbol } from './signal.js'
+import { Signal, signalSymbol } from './signal.js'
 
-type ResolverValue = {
+type ResolverValue<T = unknown> = {
   currentHTML: string
   resources: Map<string, unknown>
   hash: string
   index: number
-  data: unknown
+  data: T
 }
 
-type Resolver = (value: ResolverValue) => string | undefined
+type Resolver<T = unknown> = (value: ResolverValue<T>) => string | undefined
 
 export function resolveTemplateData(value: ResolverValue) {
   const resolvedString = pipe(value,
     resolveHTMLString,
     resolveEventListener,
-    resolveRef,
-    resolveSignal
+    resolveObjectValues
   )
 
   return {
@@ -25,7 +24,7 @@ export function resolveTemplateData(value: ResolverValue) {
   }
 }
 
-function pipe(value: ResolverValue, ...resolvers: Resolver[]) {
+function pipe(value: ResolverValue, ...resolvers: Resolver<any>[]) {
   for (const resolver of resolvers) {
     const str = resolver(value)
 
@@ -33,6 +32,12 @@ function pipe(value: ResolverValue, ...resolvers: Resolver[]) {
       return str
     }
   }
+}
+
+function resolveObjectValues(value: ResolverValue) {
+  if (typeof value.data !== 'object') return
+
+  return pipe(value, resolveRef, resolveSignal)
 }
 
 function resolveEventListener(value: ResolverValue) {
@@ -61,10 +66,10 @@ function resolveHTMLString(value: ResolverValue) {
   }
 }
 
-function resolveRef(value: ResolverValue) {
+function resolveRef(value: ResolverValue<object>) {
   const { currentHTML, hash, index, data, resources } = value
 
-  if (typeof data === 'object' && 'el' in data!) {
+  if ('el' in data!) {
     const match = currentHTML.match(/.*\sref=$/)
 
     if (!match) return
@@ -76,26 +81,22 @@ function resolveRef(value: ResolverValue) {
 }
 
 function resolveSignal(value: ResolverValue) {
+  const { data } = value
+
+  if (Reflect.get(data!, '_symbol') !== signalSymbol) return
+
+  return pipe(value, resolveAttributeSignal, resolveTextSignal) 
+}
+
+function resolveTextSignal(value: ResolverValue<Signal<unknown>>) {
   const { currentHTML, hash, index, resources, data } = value
-
-  console.log(typeof data !== 'object'
-  || Reflect.get(data!, '_symbol') !== signalSymbol, data)
-
-  if (
-    typeof data !== 'object'
-    || Reflect.get(data!, '_symbol') !== signalSymbol
-  ) return
 
   const isInsideTag = checkIsInsideTag(currentHTML)
 
-  console.log({ isInsideTag })
-
   if (!isInsideTag) return
 
-  const signalId = `sig="${hash}-${index}"`
+  const signalId = `text-sig="${hash}-${index}"`
   resources.set(signalId, data)
-
-  console.log(`set resource`, signalId, data)
 
   return `<template ${signalId}></template>`
 }
@@ -109,5 +110,18 @@ function checkIsInsideTag(html: string) {
     if (letter === '>') return true
 
     if (letter === '<') return false
+  }
+}
+
+function resolveAttributeSignal(value: ResolverValue<Signal<unknown>>) {
+  const { currentHTML, hash, index, resources, data } = value
+
+  const match = currentHTML.match(/.*\s([\w-]+)=$/)
+
+  if (match) {
+    const attributeName = match[1]
+    const signalId = `"${hash}-${index}"`
+    resources.set(`sig-attr-${attributeName}=${signalId}`, data)
+    return signalId
   }
 }
