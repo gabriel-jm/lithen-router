@@ -1,4 +1,5 @@
-import { html, render } from '../html/html.js'
+import { shell } from '../html/comments-test.js'
+import { html } from '../html/html.js'
 import { ref } from '../html/ref.js'
 import { signal } from '../html/signal.js'
 
@@ -8,13 +9,15 @@ type ToDoItem = {
   checked: boolean
 }
 
+const list = signal<ToDoItem[]>([])
+
 export function toDoList() {
   const ulRef = ref<HTMLUListElement>()
 
   const rawToDoList = localStorage.getItem('lithen-router@to-do-list')
   const toDoList = JSON.parse(rawToDoList ?? '[]')
 
-  const list = signal<ToDoItem[]>(toDoList)
+  list.set(toDoList)
 
   function submitForm(event: Event) {
     event.preventDefault()
@@ -24,38 +27,51 @@ export function toDoList() {
 
     if (!message) return
 
-    list.set(value => [...value, {
+    const item = {
       id: crypto.randomUUID(),
       message,
       checked: false
-    }])
+    }
+    list.set(value => [...value, item])
+    form.reset()
 
-    render(html`
-      <div>
-        <span>${message}</span>
-        <input type="checkbox" checked />
-      </div>
-    `, ulRef.el!)
   }
   
   return html`
     <h1>To Do List</h1>
-    <ul ref=${ulRef}>
-      ${list.get().map(item => {
-        return html`
-          <div>
-            <span>${item.message}</span>
-            <input
-              type="checkbox"
-              ${item.checked && 'checked'}
-            />
-          </div>
-        `
-      })}
-    </ul>
     <form on-submit=${submitForm}>
       <input name="message" placeholder="What to do..." />
       <button>Add</button>
     </form>
+    <ul ref=${ulRef}>
+      ${shell(list, (listData) => {
+        return listData.map(todoItem)
+      })}
+    </ul>
+  `
+}
+
+function todoItem(item: ToDoItem) {
+  const spanRef = ref<HTMLSpanElement>()
+  const labelRef = ref<Element>()
+
+  function onClickCheckbox() {
+    labelRef.el?.remove()
+    list.set(value => value.filter(it => {
+      return it.id !== item.id
+    }))
+
+    console.log(list.get())
+  }
+
+  return html`
+    <label ref=${labelRef}>
+      <input
+        type="checkbox"
+        on-click=${onClickCheckbox}
+        ${item.checked && 'checked'}
+      />
+      <span ref=${spanRef}>${item.message}</span>
+    </label>
   `
 }

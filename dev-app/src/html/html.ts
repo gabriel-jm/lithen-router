@@ -40,7 +40,7 @@ export function html(text: TemplateStringsArray, ...values: unknown[]) {
   return htmlString
 }
 
-export function render(htmlText: HTMLString, target: Element) {
+export function render(htmlText: HTMLString, target?: Element) {
   const template = document.createElement('template')
   template.innerHTML = htmlText.toString()
 
@@ -50,7 +50,12 @@ export function render(htmlText: HTMLString, target: Element) {
     applyResources(documentFragment, htmlText.resources)
   }
 
-  target.replaceChildren(documentFragment)
+  if (target) {
+    target.replaceChildren(documentFragment)
+    return
+  }
+
+  return documentFragment
 }
 
 function applyResources(docFrag: DocumentFragment, resources: Map<string, unknown>) {
@@ -69,6 +74,10 @@ function applyResources(docFrag: DocumentFragment, resources: Map<string, unknow
 
     if (key.startsWith('sig-attr-')) {
       applyAttributeSignal(docFrag, key, value as Signal<unknown>)
+    }
+
+    if (key.startsWith('nd=')) {
+      applyNode(docFrag, key, value as Node)
     }
   }
 
@@ -98,6 +107,14 @@ function applyRef(
 
   ref.el = element
   element.removeAttribute('ref')
+}
+
+function applyNode(docFrag: DocumentFragment, key: string, node: Node) {
+  const placeholder = docFrag.querySelector(`[${key}]`)
+
+  if (!placeholder) return
+
+  placeholder.replaceWith(node)
 }
 
 function applyTextSignal(

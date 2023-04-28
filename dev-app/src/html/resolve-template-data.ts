@@ -81,6 +81,13 @@ function resolveArray(value: ResolverValue) {
       return acc + data.toString()
     }
 
+    if (data instanceof Node) {
+      return resolveNodes({
+        ...value,
+        data
+      })
+    }
+
     return acc + String(data)
   }, '')
 }
@@ -143,4 +150,12 @@ function resolveAttributeSignal(value: ResolverValue<Signal<unknown>>) {
     resources.set(`sig-attr-${attributeName}=${signalId}`, data)
     return signalId
   }
+}
+
+function resolveNodes(value: ResolverValue<Node>) {
+  const { hash, index, data, resources } = value
+  const nodeId = `nd="${hash}-${index}"`
+  resources.set(nodeId, data)
+
+  return `<template ${nodeId}></template>`
 }
