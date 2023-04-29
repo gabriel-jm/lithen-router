@@ -55,7 +55,7 @@ export function render(htmlText: HTMLString, target?: Element) {
     return
   }
 
-  return documentFragment
+  return [...documentFragment.childNodes]
 }
 
 function applyResources(docFrag: DocumentFragment, resources: Map<string, unknown>) {

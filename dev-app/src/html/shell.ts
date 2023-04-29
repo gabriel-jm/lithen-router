@@ -1,7 +1,13 @@
 import { HTMLString, render } from './html.js'
 import { Signal } from './signal.js'
 
-type ShellFunction = (data: any) => Node | Node[] | null
+type ShellFunction = (data?: any) => HTMLString | HTMLString[] | null | false
+
+export type ExecutingFunction = {
+  comment: ShellComment
+  fn(): HTMLString | HTMLString[] | null | false
+}
+export const executingFunctions: (ExecutingFunction)[] = []
 
 export function shell(signal: Signal<unknown>, fn: ShellFunction) {
   const comment = document.createComment('</>')
@@ -15,7 +21,7 @@ export function shell(signal: Signal<unknown>, fn: ShellFunction) {
 
     return resultArray.map(result => {
       if (result instanceof HTMLString) {
-        return [...render(result)?.childNodes ?? []]
+        return [...render(result)!]
       }
 
       return result
@@ -52,5 +58,75 @@ export function shell(signal: Signal<unknown>, fn: ShellFunction) {
   return [
     comment,
     ...getElements(signal.get())
+  ]
+}
+
+export class ShellComment extends Comment {
+  relatedElements: Element[] = []
+  
+  constructor() {
+    super('</>')
+  }
+
+  insertAfter(htmlStrings?: HTMLString | HTMLString[] | null | false) {
+    for (const el of this.relatedElements) {
+      el.remove()
+    }
+
+    const resultArray = Array.isArray(htmlStrings)
+      ? htmlStrings
+      : [htmlStrings]
+
+    const nodes = resultArray.map(result => {
+      if (result instanceof HTMLString) {
+        return [...render(result)!]
+      }
+
+      return result
+    }).flat().filter(Boolean)
+
+    this.relatedElements = nodes as Element[]
+
+    if (nodes) {
+      this.after(...this.relatedElements)
+    }
+  }
+}
+
+export function show(fn: ShellFunction) {
+  const comment = new ShellComment()
+
+  function run() {
+    executingFunctions.push({
+      comment,
+      fn: run
+    })
+
+    try {
+      return fn()
+    } finally {
+      executingFunctions.pop()
+    }
+  }
+
+  const htmlStrings = run()
+
+  const resultArray = Array.isArray(htmlStrings)
+    ? htmlStrings
+    : [htmlStrings]
+
+  const nodes = resultArray.map(result => {
+    if (result instanceof HTMLString) {
+      return [...render(result)!]
+    }
+
+    return result
+  }).flat().filter(Boolean)
+
+  comment.relatedElements = nodes as Element[]
+
+  return [
+    comment,
+    ...nodes
   ]
 }

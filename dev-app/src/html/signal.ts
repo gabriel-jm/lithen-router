@@ -1,3 +1,5 @@
+import { ShellComment, executingFunctions } from './shell.js'
+
 export const signalSymbol = Symbol('Signal')
 
 export type Signal<T> = {
@@ -12,8 +14,30 @@ export type SignalListener<T> = (currentValue: T, oldValue: T) => void | Promise
 export function signal<T>(initialValue: T) {
   let value = initialValue
   const listeners = new Set<SignalListener<T>>()
+  const effects = new Map<ShellComment, () => void>()
 
-  const get = () => value
+  function get() {
+    const executingFn = executingFunctions.at(-1)
+
+    if (executingFn && !effects.has(executingFn.comment)) {
+
+      function listener() {
+        const { comment, fn } = executingFn!
+        
+        if (!comment.isConnected) {
+          effects.delete(comment)
+        }
+
+        const htmlStrings = fn()
+
+        comment.insertAfter(htmlStrings)
+      }
+
+      effects.set(executingFn.comment, listener)
+    }
+
+    return value
+  }
 
   function set(incommingValue: T | (SignalUpdater<T>)) {
     const newValue = typeof incommingValue === 'function'
@@ -27,6 +51,10 @@ export function signal<T>(initialValue: T) {
 
     for (const listener of listeners) {
       listener(value, oldValue)
+    }
+
+    for (const [_, listener] of effects) {
+      listener()
     }
   }
 

@@ -37,7 +37,12 @@ function pipe(value: ResolverValue, ...resolvers: Resolver<any>[]) {
 function resolveObjectValues(value: ResolverValue) {
   if (typeof value.data !== 'object') return
 
-  return pipe(value, resolveArray, resolveRef, resolveSignal)
+  return pipe(value,
+    resolveNodes,
+    resolveArray,
+    resolveRef,
+    resolveSignal
+  )
 }
 
 function resolveEventListener(value: ResolverValue) {
@@ -69,7 +74,9 @@ function resolveHTMLString(value: ResolverValue) {
 function resolveArray(value: ResolverValue) {
   if (!Array.isArray(value.data)) return
   
-  const { data: dataList } = value
+  const { data: dataList, index } = value
+
+  let internalNodeCount = 1
 
   return dataList.reduce((acc, data) => {
     if (data instanceof HTMLString) {
@@ -82,10 +89,15 @@ function resolveArray(value: ResolverValue) {
     }
 
     if (data instanceof Node) {
-      return resolveNodes({
+      const resolvedNode = resolveNodes({
         ...value,
+        index: index + internalNodeCount,
         data
       })
+
+      internalNodeCount++
+
+      return acc + resolvedNode
     }
 
     return acc + String(data)
@@ -153,6 +165,8 @@ function resolveAttributeSignal(value: ResolverValue<Signal<unknown>>) {
 }
 
 function resolveNodes(value: ResolverValue<Node>) {
+  if (!(value.data instanceof Node)) return
+
   const { hash, index, data, resources } = value
   const nodeId = `nd="${hash}-${index}"`
   resources.set(nodeId, data)

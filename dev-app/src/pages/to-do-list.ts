@@ -1,4 +1,4 @@
-import { shell } from '../html/comments-test.js'
+import { shell, show } from '../html/shell.js'
 import { html } from '../html/html.js'
 import { ref } from '../html/ref.js'
 import { signal } from '../html/signal.js'
@@ -36,18 +36,32 @@ export function toDoList() {
     form.reset()
 
   }
+
+  const isShowing = signal(true)
+
+  function toggleShow() {
+    isShowing.set(!isShowing.get())
+  }
   
   return html`
     <h1>To Do List</h1>
+    
     <form on-submit=${submitForm}>
       <input name="message" placeholder="What to do..." />
       <button>Add</button>
     </form>
+
     <ul ref=${ulRef}>
       ${shell(list, (listData) => {
         return listData.map(todoItem)
       })}
     </ul>
+
+    <h1>Show teste</h1>
+    ${show(() => {
+      return isShowing.get() && html`<p>Is Showing</p>`
+    })}
+    <button on-click=${toggleShow}>toggle</button>
   `
 }
 
