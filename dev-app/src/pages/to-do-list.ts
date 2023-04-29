@@ -1,4 +1,4 @@
-import { shell, show } from '../html/shell.js'
+import { shell } from '../html/shell.js'
 import { html } from '../html/html.js'
 import { ref } from '../html/ref.js'
 import { signal } from '../html/signal.js'
@@ -52,15 +52,13 @@ export function toDoList() {
     </form>
 
     <ul ref=${ulRef}>
-      ${shell(list, (listData) => {
-        return listData.map(todoItem)
-      })}
+      ${shell(() => list.get().map(todoItem))}
     </ul>
 
     <h1>Show teste</h1>
-    ${show(() => {
-      return isShowing.get() && html`<p>Is Showing</p>`
-    })}
+    ${shell(() => isShowing.get() && html`
+      <p>Is Showing</p>
+    `)}
     <button on-click=${toggleShow}>toggle</button>
   `
 }

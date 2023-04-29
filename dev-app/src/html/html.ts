@@ -58,6 +58,24 @@ export function render(htmlText: HTMLString, target?: Element) {
   return [...documentFragment.childNodes]
 }
 
+export function renderFromArray(htmlStrings: HTMLString | HTMLString[] | null | false) {
+  if (!htmlStrings) return []
+
+  const resultArray = Array.isArray(htmlStrings)
+    ? htmlStrings
+    : [htmlStrings]
+
+  const elements = resultArray.map(result => {
+    if (result instanceof HTMLString) {
+      return [...render(result)!]
+    }
+
+    return result
+  }).flat().filter(Boolean)
+
+  return elements
+}
+
 function applyResources(docFrag: DocumentFragment, resources: Map<string, unknown>) {
   for (const [key, value] of resources) {
     if (key.startsWith('on-')) {
