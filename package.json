@@ -1,6 +1,6 @@
 {
   "name": "lithen-router",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "A routing implementation for use with Web Components",
   "author": "Gabriel José",
   "type": "module",
