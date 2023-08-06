@@ -1,7 +1,7 @@
 import { shell } from '../html/shell.js'
 import { html } from '../html/html.js'
 import { ref } from '../html/ref.js'
-import { Signal, signal, signalList } from '../html/signal.js'
+import { signal } from '../html/signal.js'
 
 type ToDoItem = {
   id: string
@@ -9,7 +9,7 @@ type ToDoItem = {
   checked: boolean
 }
 
-const list = signalList<ToDoItem>()
+const list = signal<ToDoItem[]>([])
 
 export function toDoList() {
   const rawToDoList = localStorage.getItem('lithen-router@to-do-list')
@@ -27,11 +27,11 @@ export function toDoList() {
 
     // Not ideal, should not be necessary to create a new signal
     // And probably should unsubscribe the previous
-    const item = signal({
+    const item = {
       id: crypto.randomUUID() as string,
       message,
       checked: false
-    })
+    }
     list.set(value => [...value, item])
     form.reset()
   }
@@ -48,7 +48,7 @@ export function toDoList() {
     <ul>
       ${shell(() => list
         .get()
-        .filter(item => !item.get().checked)
+        .filter(item => !item.checked)
         .map(todoItem)
       )}
     </ul>
@@ -57,20 +57,21 @@ export function toDoList() {
     <ul>
       ${shell(() => list
         .get()
-        .filter(item => item.get().checked)
+        .filter(item => item.checked)
         .map(todoItem)
       )}
     </ul>
   `
 }
 
-function todoItem(item: Signal<ToDoItem>) {
+function todoItem(item: ToDoItem) {
   const spanRef = ref<HTMLSpanElement>()
   const labelRef = ref<Element>()
-  const { message, checked } = item.get()
+  const { message, checked } = item
 
   function onClickCheckbox() {
-    item.set(value => ({...value, checked: !checked }))
+    item.checked = !checked
+    list.update()
   }
 
   return html`

@@ -13,6 +13,7 @@ export type SignalListener<T> = (currentValue: T, oldValue: T) => void | Promise
 
 export function signal<T>(initialValue: T) {
   let value = initialValue
+  let oldValue = initialValue
   const listeners = new Set<SignalListener<T>>()
   const effects = new Map<ShellComment, () => void>()
 
@@ -46,9 +47,13 @@ export function signal<T>(initialValue: T) {
 
     if (newValue === value) return
 
-    const oldValue = value
+    oldValue = value
     value = newValue
 
+    update()
+  }
+
+  function update() {
     for (const listener of listeners) {
       listener(value, oldValue)
     }
@@ -69,6 +74,7 @@ export function signal<T>(initialValue: T) {
   return {
     get,
     set,
+    update,
     onChange,
     remove,
     _symbol: signalSymbol
