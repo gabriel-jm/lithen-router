@@ -1,7 +1,7 @@
 import { shell } from '../html/shell.js'
 import { html } from '../html/html.js'
 import { ref } from '../html/ref.js'
-import { signal } from '../html/signal.js'
+import { Signal, signal, signalList } from '../html/signal.js'
 
 type ToDoItem = {
   id: string
@@ -9,11 +9,9 @@ type ToDoItem = {
   checked: boolean
 }
 
-const list = signal<ToDoItem[]>([])
+const list = signalList<ToDoItem>()
 
 export function toDoList() {
-  const ulRef = ref<HTMLUListElement>()
-
   const rawToDoList = localStorage.getItem('lithen-router@to-do-list')
   const toDoList = JSON.parse(rawToDoList ?? '[]')
 
@@ -27,63 +25,62 @@ export function toDoList() {
 
     if (!message) return
 
-    const item = {
-      id: crypto.randomUUID(),
+    // Not ideal, should not be necessary to create a new signal
+    // And probably should unsubscribe the previous
+    const item = signal({
+      id: crypto.randomUUID() as string,
       message,
       checked: false
-    }
+    })
     list.set(value => [...value, item])
     form.reset()
-
-  }
-
-  const isShowing = signal(true)
-
-  function toggleShow() {
-    isShowing.set(!isShowing.get())
   }
   
   return html`
     <h1>To Do List</h1>
     
-    <form on-submit=${submitForm}>
+    <form class="d-flex" on-submit=${submitForm}>
       <input name="message" placeholder="What to do..." />
       <button>Add</button>
     </form>
 
-    <ul ref=${ulRef}>
-      ${shell(() => list.get().map(todoItem))}
+    <h3>Open</h3>
+    <ul>
+      ${shell(() => list
+        .get()
+        .filter(item => !item.get().checked)
+        .map(todoItem)
+      )}
     </ul>
 
-    <h1>Show teste</h1>
-    ${shell(() => isShowing.get() && html`
-      <p>Is Showing</p>
-    `)}
-    <button on-click=${toggleShow}>toggle</button>
+    <h3>Closed</h3>
+    <ul>
+      ${shell(() => list
+        .get()
+        .filter(item => item.get().checked)
+        .map(todoItem)
+      )}
+    </ul>
   `
 }
 
-function todoItem(item: ToDoItem) {
+function todoItem(item: Signal<ToDoItem>) {
   const spanRef = ref<HTMLSpanElement>()
   const labelRef = ref<Element>()
+  const { message, checked } = item.get()
 
   function onClickCheckbox() {
-    labelRef.el?.remove()
-    list.set(value => value.filter(it => {
-      return it.id !== item.id
-    }))
-
-    console.log(list.get())
+    item.set(value => ({...value, checked: !checked }))
   }
 
   return html`
-    <label ref=${labelRef}>
+    <label on-click=${onClickCheckbox} ref=${labelRef}>
       <input
         type="checkbox"
-        on-click=${onClickCheckbox}
-        ${item.checked && 'checked'}
+        ${checked && 'checked'}
+        ${checked && 'disabled'}
       />
-      <span ref=${spanRef}>${item.message}</span>
+      <span ref=${spanRef}>${message}</span>
     </label>
   `
 }

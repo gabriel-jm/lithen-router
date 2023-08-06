@@ -74,3 +74,15 @@ export function signal<T>(initialValue: T) {
     _symbol: signalSymbol
   }
 }
+
+export function signalList<T>(...values: Array<T>) {
+  const listSignal = signal(values.map(value => signal(value)))
+  
+  for (const signal of listSignal.get()) {
+    signal.onChange(() => {
+      listSignal.set(listSignal.get())
+    })
+  }
+
+  return listSignal
+}

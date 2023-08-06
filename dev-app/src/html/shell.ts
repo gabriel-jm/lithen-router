@@ -1,5 +1,4 @@
 import { HTMLString, renderFromArray } from './html.js'
-import { Signal } from './signal.js'
 
 type ShellFunction = (data?: any) => HTMLString | HTMLString[] | null | false
 
