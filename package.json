@@ -22,10 +22,10 @@
     "check": "ncu"
   },
   "devDependencies": {
-    "@types/node": "^18.15.0",
-    "npm-check-updates": "^16.7.12",
-    "typescript": "^4.9.5",
-    "vite": "^4.1.4"
+    "@types/node": "^20.4.8",
+    "npm-check-updates": "^16.10.17",
+    "typescript": "^5.1.6",
+    "vite": "^4.4.8"
   },
   "keywords": [
     "lithen",
