@@ -15,4 +15,4 @@ You can see the [Getting started](./docs/getting-started.md) page, teaching how 
 
 ## Libs that are part of Lithen
 - [lithen-super-element](https://www.npmjs.com/package/lithen-super-element)
-- [lithen-tag-functions](https://www.npmjs.com/package/lithen-tag-functions)
+- [lithen-fns](https://www.npmjs.com/package/lithen-fns)
