@@ -2,6 +2,13 @@ import { html, HTMLString } from '../html/html.js'
 import { router } from '../router.js'
 
 export function navLayout(children: HTMLString) {
+  const routes = {
+    '/about': 'About',
+    '/counter': 'Counter',
+    '/to-do': 'To Do List',
+    '/quest': 'Quest',
+    '/not': 'Not Found'
+  }
 
   function onClickTitle(e: Event) {
     e.preventDefault()
@@ -21,18 +28,14 @@ export function navLayout(children: HTMLString) {
           </li>
         </ul>
         <ul>
-          <li> 
-            <a href="/about">About</a>
-          </li>
-          <li>
-            <a href="/counter">Counter</a>
-          </li>
-          <li>
-            <a href="/to-do">To Do List</a>
-          </li>
-          <li>
-            <a href="/not">Not found</a>
-          </li>
+          ${Object
+            .entries(routes)
+            .map(([path, title]) => html`
+              <li>
+                <a href="${path}">${title}</a>
+              </li>
+            `)
+          }
         </ul>
       </nav>
     </header>

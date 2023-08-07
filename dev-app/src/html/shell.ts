@@ -6,6 +6,7 @@ export type ExecutingFunction = {
   comment: ShellComment
   fn(): HTMLString | HTMLString[] | null | false
 }
+
 export const executingFunctions: (ExecutingFunction)[] = []
 
 export class ShellComment extends Comment {
