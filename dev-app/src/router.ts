@@ -6,6 +6,7 @@ import { counter } from './pages/counter.js'
 import { home } from './pages/home.js'
 import { notFound } from './pages/not-found.js'
 import { toDoList } from './pages/to-do-list.js'
+import { questPage } from './pages/quest.js'
 
 interface RouterData {
   layout?(children: HTMLString): HTMLString
@@ -18,6 +19,7 @@ const router = new LithenRouter<RouterData>({
   '/counter': wrapNavLayout(counter),
   '/counter/:initialCount': wrapNavLayout(counter),
   '/to-do': wrapNavLayout(toDoList),
+  '/quest': wrapNavLayout(questPage),
   notFound: { render: notFound }
 })
 
